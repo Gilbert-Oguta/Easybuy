@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EasyBuy{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'output.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playball&display=swap" rel="stylesheet">
+</head>
+</head>
+<body class="bg-ivory">
+    <header class=" bg-white sticky top-0 left-0 w-full z-50 border-b border-gray-200">
+        <div class="flex justify-between bg-green-700 p-2 text-ivory">
+            <div class="flex ml-4 font-semibold">
+                <a href="http://" class="flex hover:underline">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                    </svg>                  
+                    - (+254) 723 744 999
+                </a>
+            </div>
+            <div class="">
+                <a href="http://" class="hover:underline">
+                    <span class="font-bold">BLACK FRIDAY OFFERS!!!</span>
+                </a>
+            </div>
+            <div class="mr-4">
+                <a href="http://" class="hover:underline">Get 50% off items | Check offers</a>
+            </div>
+        </div>
+        <nav class="flex justify-between">
+            <div class="p-2">
+                <h1 class=" font-playball text-5xl font-bold text-green-800 hover:text-green-600 cursor-pointer"><a href="{% url 'main' %}">EasyBuy</a></h1>
+            </div>
+            <div>
+                <ul class="flex justify-between p-2">
+                  {% for category in categories %}
+                    <li class="hover:underline m-4 font-semibold text-gray-600">
+                        <a href="{% url 'category_products' category.id %}">{{ category.name }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+            </div>
+            <div class="flex bg-slate-200 rounded-xl m-4 p-2">
+              <form method="GET" action="{% url 'product_search' %}" class="flex">
+                <input type="text" name="q" class="bg-slate-200 outline-none" placeholder="Search products..." value="{{ request.GET.q|default_if_none:'' }}">
+                <button type="submit">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg> 
+                </button>
+              </form>
+            </div>         
+            <div class="flex p-2">
+                <a href="http://" class="flex justify-between m-4 ">
+                  {% if user.profile.image %}
+                      <img  style="width: 30px; height: 30px;" class="w-4 h-4 m-0 rounded-full" src="{{ user.profile.image }}" alt="{{ user.username }}'s profile image">
+                      {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 mr-2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                        </svg>
+                      {% endif %}
+                </a>
+                <a href="{% url 'cart' %}" class="flex items-center m-4 p-1 rounded-lg hover:bg-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 ">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                    </svg>
+                    <div id="cart-count" class=" -top-8 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ total_items }}</div>
+                </a>
+            </div>
+        </nav>
+    </header>
+    <main>
+      
+      {% block content %}
+      <div class="bg-contain my-10 mx-2 rounded-lg p-4" style="background-image: url('https://i.ibb.co/grdgLfM/bg.png');">
+        <div class="flex justify-between">
+            <div class="text-ivory">
+                <h1 class="my-4 text-4xl font-bold">Welcome to EasyBuy</h1>
+                <h2 class="text-2xl font-bold">Discover Amazing Deals on Products You'll Love</h2>
+                <h3 class="text-xl font-semibold my-4">Best offer on Furniture goods, Discover more deals this festive season</h3>
+                <button type="button" class="bg-white text-green-700 hover:bg-gray-300 flex justify-between rounded-lg p-2 my-6">
+                    More Offers!
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 ml-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+                    </svg>                      
+                </button>
+            </div>
+            
+            <div class="flex justify-between">
+                <div class="relative max-w-xs p-4 m-4 bg-white rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out">
+                    <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold uppercase px-2 py-1 rounded-full">
+                        Sale
+                    </div>
+                    <img src="https://i.ibb.co/YyM3mq7/pexels-pixabay-280471.jpg" alt="Product Image" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <div class="text-center">
+                        <h2 class="text-lg font-bold text-gray-900 mb-1">
+                            Limited Time Offer!
+                        </h2>
+                        <p class="text-red-500 text-xl font-semibold">
+                            20% Off Today Only!
+                        </p>
+                    </div>
+                    <div class="mt-4 flex justify-center">
+                        <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-full">
+                            Buy Now
+                        </button>
+                    </div>
+                </div>
+                <div class="relative max-w-xs p-4 m-4 bg-white rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out">
+                    <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold uppercase px-2 py-1 rounded-full">
+                        Sale
+                    </div>
+                    <img src="https://i.ibb.co/ZdmfxLn/chairs.jpg" alt="Product Image" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <div class="text-center">
+                        <h2 class="text-lg font-bold text-gray-900 mb-1">
+                            Limited Time Offer!
+                        </h2>
+                        <p class="text-red-500 text-xl font-semibold">
+                            20% Off Today Only!
+                        </p>
+                    </div>
+                    <div class="mt-4 flex justify-center">
+                        <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-full">
+                            Buy Now
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class=" text-green-700 flex justify-end">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-6 rounded-full p-1 mx-4 bg-ivory hover:bg-gray-200">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-6 rounded-full p-1 mx-4 bg-ivory hover:bg-gray-200">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>                  
+        </div>
+      </div>
+      <div class="">
+          {% for category, products in category_products.items %}
+              <div class="mb-12">
+                  <h2 class="text-2xl font-semibold my-4 text-center text-green-700 ">Popular {{ category.name }}</h2>
+                  <div class="flex flex-wrap flex-row w-11/12 gap-4 mx-auto">
+                      {% for product in products %}
+                      <div class="my-4 max-w-sm rounded-lg overflow-hidden hover:shadow-lg shadow-none border border-gray-200 bg-white mx-2 cursor-pointer">                              
+                      <div class="relative">
+                                  {% if product.image %}
+                                    <div class="w-full h-48  overflow-hidden rounded-lg">
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="p-2 w-full h-48 object-contain">
+                                    </div>
+                                  {% else %}
+                                      <div class="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-500">
+                                          No Image Available
+                                      </div>
+                                  {% endif %}
+                              </div>
+      
+                              <div class="p-6">
+                                  <h3 class="font-bold text-xl text-gray-800 mb-1">{{ product.name }}</h3>
+                                  <div class="flex items-center justify-between mb-2">
+                                      <span class="text-red-500 text-xl font-semibold">Ksh {{ product.price }}</span>
+                                  </div>
+                                  <p class="text-gray-600 mb-4">{{ product.description|truncatewords:10 }}</p>
+                                  <button type="button" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors mt-auto" 
+                                          onclick="addToCart('{{ product.id }}')">
+                                      Add to Cart
+                                  </button>
+                              </div>
+                          </div>
+                      {% endfor %}
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
+      {% endblock %}      
+    </main>
+
+    <footer class="bg-ivory border-t border-gray-200 text-gray-700 py-10">
+        <div class="max-w-screen-xl mx-auto px-4 md:px-8">
+          <!-- Sitemap and Links -->
+          <div class="flex flex-col md:flex-row justify-between mb-10">
+            <!-- Sitemap Links Section -->
+            <div class="mb-6 md:mb-0 md:w-1/4">
+              <h4 class="text-lg font-semibold text-green-700 mb-4">Sitemap</h4>
+              <ul class="space-y-2 text-gray-600">
+                <li><a href="#" class="hover:text-green-500 transition">Electronics</a></li>
+                <li><a href="#" class="hover:text-green-500 transition">Furniture</a></li>
+                <li><a href="#" class="hover:text-green-500 transition">Food and Beverages</a></li>
+                <li><a href="#" class="hover:text-green-500 transition">Clothing and Fashion</a></li>
+              </ul>
+            </div>
+      
+            <!-- Contact Information Section -->
+            <div class="mb-6 md:mb-0 md:w-1/4">
+              <h4 class="text-lg font-semibold text-green-700 mb-4">Contact Us</h4>
+              <p class="text-gray-600 mb-1">Phone: (254) 723 744 999</p>
+              <p class="text-gray-600 mb-1">Email: <a href="mailto:easybuy@company.com" class="hover:text-green-500 transition">easybuy@company.com</a></p>
+              <p class="text-gray-600">Address: 123 Main Street, City, State</p>
+            </div>
+      
+            <!-- Email Signup Form -->
+            <div class="md:w-1/4">
+              <h4 class="text-lg font-semibold text-green-700 mb-4">Stay Updated</h4>
+              <form class="flex flex-col">
+                <input type="email" placeholder="Your Email" class="p-2 mb-2 rounded text-gray-700 border border-gray-300 focus:border-green-500 focus:ring-0" required>
+                <button type="submit" class="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">Sign Up</button>
+              </form>
+            </div>
+      
+            <!-- Social Media Links -->
+            <div class="md:w-1/4 flex md:justify-end">
+              <div class="text-center">
+                <h4 class="text-lg font-semibold text-green-700 mb-4">Follow Us</h4>
+                <div class="flex justify-center space-x-4">
+                  <a href="#" class="text-gray-600 hover:text-green-500 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                      </svg>                      
+                  </a>
+                  <a href="#" class="text-gray-600 hover:text-green-500 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                      </svg>                      
+                  </a>
+                  <a href="#" class="text-gray-600 hover:text-green-500 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                      </svg>                      
+                  </a>
+                  <a href="#" class="text-gray-600 hover:text-green-500 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                      </svg>                      
+                  </a>
+                  <a href="#" class="text-gray-600 hover:text-green-500 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                      </svg>                      
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Legal and Copyright Information -->
+          <div class="flex flex-col md:flex-row items-center justify-between border-t border-gray-200 pt-6">
+            <p class="text-gray-600 text-sm">&copy; 2024 EasyBuy. All Rights Reserved.</p>
+            <div class="flex space-x-4 mt-4 md:mt-0 text-sm">
+              <a href="#" class="text-gray-600 hover:text-green-500 transition">Privacy Policy</a>
+              <a href="#" class="text-gray-600 hover:text-green-500 transition">Terms of Service</a>
+              <a href="#" class="text-gray-600 hover:text-green-500 transition">Cookie Policy</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <script>
+        function addToCart(productId) {
+          fetch(`/add-to-cart/${productId}/`, {
+              method: 'GET',
+              headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+              document.getElementById('cart-count').innerText = data.total_items;
+              console.log('Product ID:', data.product_id);
+              alert("Item added to cart!");
+          })
+          .catch(error => console.error('Error:', error));
+      }
+
+      function goToProductDetails(productId) 
+      { 
+        window.location.href = `/product/${productId}/`; 
+      }
+      </script>
+</body>
+</html>
